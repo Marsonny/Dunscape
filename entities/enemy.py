@@ -2,9 +2,9 @@ from utils.validators import validate_if_string, validate_if_number
 from utils.exceptions import SaveDataError
 import random
 
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from .player import Player
+# from typing import TYPE_CHECKING
+# if TYPE_CHECKING:
+#     from .player import Player
 
 class Enemy:
     def __init__(self, name, enemyHp, enemyMaxHp, durabilityDamage, enemyType):

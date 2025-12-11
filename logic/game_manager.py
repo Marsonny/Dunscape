@@ -215,9 +215,16 @@ def load_game(filename="savegame.json"):
             room.e_locked = room_data['e_locked']
             room.w_locked = room_data['w_locked']
 
-        # --- 3. RECONSTRUCT PLAYER ---
+                # --- 3. RECONSTRUCT PLAYER ---
         player_data = game_state['player']
-        player = Player(player_data['name'], player_data['maxHp']) # Start with name and maxHp
+
+        # Get the saved base stats, which will serve as our class_data
+        saved_base_stats = player_data['base_stats']
+
+        # Create the player using the new constructor!
+        player = Player(player_data['name'], saved_base_stats) 
+
+        # Restore the player's variable stats (like currentHp)
         player.currentHp = player_data['currentHp']
         
         # Find the player's current room object from our reconstructed map

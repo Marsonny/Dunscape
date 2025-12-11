@@ -26,7 +26,8 @@ def test_save_and_load_restores_game_state():
     all_dungeon_rooms = [start_room, hallway]
 
     # 4. Create a player and modify their state
-    player = Player("TestSave", 100)
+    default_class_data = { "base_maxHp": 100 }
+    player = Player("TestSave", default_class_data)
     player.currentRoom = start_room
     player.currentHp = 75 # Player has taken some damage
 

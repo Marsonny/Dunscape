@@ -64,7 +64,7 @@ def boss_battle(player, boss):
         
         if boss.enemyHp > 0:
             print(f"Boss turn!")
-            boss.attack(boss.abilities, player)
+            boss.attack(player)
             separator()
         
         if player.currentHp <= 0:

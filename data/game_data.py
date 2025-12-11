@@ -1,6 +1,44 @@
 from entities.items import Consumable, Weapon, Tool
 from entities.room import Room
 from entities.enemy import Enemy, Boss
+from entities.abilities.regenerate import RegenerateAbility
+from entities.abilities.heavy_slam import HeavySlamAbility
+from entities.abilities.weaken import WeakenAbility
+from entities.abilities.sharpen import SharpenAbility
+
+PLAYER_CLASSES = {
+    "vanguard": {
+        "name": "Vanguard",
+        "description": "A defensive powerhouse. High HP and defense, low speed and damage.",
+        "base_maxHp": 70,
+        "base_damage": 3,
+        "base_speed": 15,
+        "base_defense": 0.8  # Takes only 80% of damage
+    },
+    "shadow": {
+        "name": "Shadow",
+        "description": "A master of stealth. Excels at sneak attacks, but is frail.",
+        "base_maxHp": 40,
+        "base_sneakMultiplier": 4.0, # High sneak damage
+        "base_sneakAccuracy": 0.5,   # High sneak chance
+        "base_speed": 25
+    },
+    "reaver": {
+        "name": "Reaver",
+        "description": "A high-risk, high-reward attacker. High damage, low defense.",
+        "base_maxHp": 50,
+        "base_damage": 8,            # Very high starting damage
+        "base_defense": 1.2          # Takes 120% of damage
+    },
+    "pathfinder": {
+        "name": "Pathfinder",
+        "description": "A resourceful survivor. Better at escaping and adapting to found gear.",
+        "base_maxHp": 50,
+        "base_escapeChance": 0.5,    # High chance to run
+        "base_speed": 22
+        # Note: We can add a passive for weapon durability later
+    }
+}
 
 #item(consumables)
 consumable_pool = [
@@ -95,6 +133,8 @@ enemy_pool = [
 
 # boss enemies 
 boss_pool = [
-    Boss("King Goblin", 100, 100, 10, "boss" , 5,["Regenerate", "HeavySlam", "Weaken"], 2),
-    Boss("Steel Golem", 150, 150, 25, "boss", 1, ["Sharpen"], 1)
+    Boss("King Goblin", 100, 100, 10, "boss", 5, 
+         [RegenerateAbility(), HeavySlamAbility(), WeakenAbility()], 2),
+    Boss("Steel Golem", 150, 150, 25, "boss", 10, 
+         [SharpenAbility(), HeavySlamAbility()], 1)
 ]

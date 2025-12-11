@@ -1,10 +1,11 @@
 from utils.validators import validate_if_string, validate_if_number
+from entities.abilities.base_ability import Ability
 from utils.exceptions import SaveDataError
 import random
 
-# from typing import TYPE_CHECKING
-# if TYPE_CHECKING:
-#     from .player import Player
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .player import Player
 
 class Enemy:
     def __init__(self, name, enemyHp, enemyMaxHp, durabilityDamage, enemyType):
@@ -56,7 +57,7 @@ class Enemy:
             raise SaveDataError(f"Unknown enemy class in save data: {class_name}")
         
 class Boss(Enemy):
-    def __init__(self, name, enemyHp, enemyMaxHp, durabilityDamage, enemyType, normalAtk, abilities, abilityCooldown):
+    def __init__(self, name, enemyHp, enemyMaxHp, durabilityDamage, enemyType, normalAtk, abilities : list[Ability], abilityCooldown):
         super().__init__(name, enemyHp, enemyMaxHp, durabilityDamage, enemyType)
         self.normalAtk = validate_if_number(normalAtk, "normalAtk", "Boss")
         self.abilities = abilities
@@ -82,34 +83,18 @@ class Boss(Enemy):
         print(f"The {self.name} dealt {damage} points of damage to you.")
         player.currentHp -= damage
         
-    def use_ability(self, abilities, player):
-        ability = random.randint(0, len(abilities)-1) 
-        if abilities[ability] == "Regenerate":
-            regenHp = self.enemyMaxHp * 0.1
-            self.enemyHp += regenHp
-            if self.enemyHp > self.enemyMaxHp:
-                self.enemyHp = self.enemyMaxHp
-            print(f"{self.name} used regenerate! It recovered {regenHp} points of Hp")
-        elif abilities[ability] == "HeavySlam":
-            print(f"{self.name} used Heavy slam!")
-            heavySlamDmg = self.normalAtk * 3
-            player.currentHp -= heavySlamDmg
-            print(f"{self.name} dealt {heavySlamDmg} points of damage to you.")
-        elif abilities[ability] == "Weaken":
-            print(f"{self.name} used weaken!")
-            defDown = player.playerDefense * 0.1
-            player.playerDefense += defDown
-            print(f"{"Your damage taken increased by 10%."}")
-        elif abilities[ability] == "Sharpen":
-            print(f"{self.name} used Sharpen!")
-            self.enemyMaxHp -= (self.enemyMaxHp * 0.05)
-            self.normalAtk += 5
-            print(f"{self.name} current hp is reduced by 5% of its max Hp. Normal attack power increased by 5")
+    def use_ability(self, player: 'Player'):
+        if not self.abilities:
+            print(f"{self.name} has no abilities to use!")
+            return
             
-    def attack(self, abilities, player):
+        chosen_ability = random.choice(self.abilities)
+        chosen_ability.use(caster=self, target=player)
+            
+    def attack(self, player):
         if self.abilityCooldown > 0:
             self.normal_attack(player)
             self.abilityCooldown -= 1
         else:
-            self.use_ability(abilities, player)
+            self.use_ability(player)
             self.abilityCooldown = self.base_abilityCooldown 

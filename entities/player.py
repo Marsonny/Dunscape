@@ -6,41 +6,52 @@ import random
 
     
 class Player:
-    def __init__(self, name, base_maxHp):
+    def __init__(self, name: str, class_data: dict):
         
         self.name = validate_if_string(name, "name", "Player")
-        self.base_maxHp = validate_if_number(base_maxHp, "base_maxHp", "Player")
-        self.maxHp = self.base_maxHp
-        self.base_damage = 5
-        self.base_sneakMultiplier = 2.0
-        self.base_speed = 20
-        self.base_defense = 1.0
-        self.base_sneakAccuracy = 0.3
-        self.base_escapeChance = 0.3
+        self.player_class = validate_if_string(class_data.get('name'), "player_class", "Player")
+        self.base_maxHp = validate_if_number(class_data.get('base_maxHp', 50), "base_maxHp", "Player")
+        self.base_damage = validate_if_number(class_data.get('base_damage', 5), "base_damage", "Player")
+        self.base_sneakMultiplier = validate_if_number(class_data.get('base_sneakMultiplier', 2.0), "base_sneakMultiplier", "Player")
+        self.base_speed = validate_if_number(class_data.get('base_speed', 20), "base_speed", "Player")
+        self.base_defense = validate_if_number(class_data.get('base_defense', 1.0), "base_defense", "Player")
+        self.base_sneakAccuracy = validate_if_number(class_data.get('base_sneakAccuracy', 0.3), "base_sneakAccuracy", "Player")
+        self.base_escapeChance = validate_if_number(class_data.get('base_escapeChance', 0.3), "base_escapeChance", "Player")
         
+        self.maxHp = self.base_maxHp
         self.currentHp = self.maxHp
         self.currentDamage = self.base_damage
         self.sneakMultiplier = self.base_sneakMultiplier
-        self.weaponDurability = 0 
+        
         self.playerSpeed = self.base_speed
         self.playerDefense = self.base_defense 
         self.sneakAccuracy = self.base_sneakAccuracy
         self.escapeChance = self.base_escapeChance
+        
+        
+        self.weaponDurability = 0 
         self.canUnlockDoors = False
         self.unbreakableWpn = False
-        
-        self.currentRoom = None
-        self.weaponSlot = []
-        self.toolSlot = []
-        self.consumableSlot = []
+        self.currentRoom : Room = None
+        self.weaponSlot : list[Weapon] = []
+        self.toolSlot : list[Tool] = []
+        self.consumableSlot : list[Consumable] = []
     
     def to_dict(self):
         return {
             "class" : self.__class__.__name__,
             "name" : self.name,
             "currentHp" : self.currentHp,
-            "maxHp" : self.maxHp,
             "currentRoom" : self.currentRoom.name,
+            "base_stats": {
+                'base_maxHp': self.base_maxHp,
+                'base_damage': self.base_damage,
+                'base_sneakMultiplier': self.base_sneakMultiplier,
+                'base_speed': self.base_speed,
+                'base_defense': self.base_defense,
+                'base_sneakAccuracy': self.base_sneakAccuracy,
+                'base_escapeChance': self.base_escapeChance
+            },
             "inventory" : {
                 "weapon": [item.to_dict() for item in self.weaponSlot],
                 "tool" : [item.to_dict() for item in self.toolSlot],
@@ -113,7 +124,7 @@ class Player:
             
     def player_status(self):
         """ Displays some of the player stats """
-        print(f"{self.name}\nHp: {self.currentHp}/{self.maxHp}    Weapon Damage: {self.currentDamage}    Weapon Durability: {self.weaponDurability}")
+        print(f"{self.name}     Class: {self.player_class}\nHp: {self.currentHp}/{self.maxHp}    Weapon Damage: {self.currentDamage}    Weapon Durability: {self.weaponDurability}")
         print(f"Damage Receive: {self.playerDefense *100}%    Speed: {self.playerSpeed}    Sneak Atk Mult: {self.sneakMultiplier}x")
         print(f"Master Key: {self.canUnlockDoors}    Escape chance: {self.escapeChance *100}%    Sneak Accuracy: {self.sneakAccuracy * 100}%")
         self.view_equipment()
